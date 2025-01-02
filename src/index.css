@@ -1,0 +1,11 @@
+/* filepath: /c:/Users/gaura/quiz-app/src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.bg-custom {
+  background-image: url('https://imgs.search.brave.com/8GfjSxI1Uz2DyrD8Gpa1EfhxKRANByNhxgH-KLgS6So/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9xdWVzdGlvbmlu/Zy1jb25jZXB0LXdp/dGgtcXVlc3Rpb24t/bWFya18yMy0yMTUw/NDA4MjA5LmpwZz9z/ZW10PWFpc19oeWJy/aWQ');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
