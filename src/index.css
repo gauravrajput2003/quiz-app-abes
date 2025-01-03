@@ -2,13 +2,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 .bg-custom {
-  background-image: url('https://imgs.search.brave.com/8GfjSxI1Uz2DyrD8Gpa1EfhxKRANByNhxgH-KLgS6So/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9xdWVzdGlvbmlu/Zy1jb25jZXB0LXdp/dGgtcXVlc3Rpb24t/bWFya18yMy0yMTUw/NDA4MjA5LmpwZz9z/ZW10PWFpc19oeWJy/aWQ');
+  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/008/889/844/small/quiz-set-in-doodle-style-illustration-icon-question-symbol-for-print-and-design-quiz-and-exam-concept-isolated-element-on-black-background-collection-of-sign-for-school-and-event-vector.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
 }
+
 .footer {
   background-color: #282c34;
   color: #ffffff;

@@ -77,7 +77,7 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30); // Reset timer for the next question
         setTimerRunning(true); // Start timer
-      }, 2000); // 2 seconds delay
+      }, 500);
     } else {
       setQuizComplete(true);
       // Dispatch action to save score with user's name
@@ -112,45 +112,47 @@ function Trivia() {
   }, [timer, timerRunning]);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6">A2Z Quiz</h2>
+    <div className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
+      style={{ backgroundImage: 'url("/path-to-your-background-image.jpg")' }}
+    >
+      <h2 className="text-4xl font-extrabold text-center mb-8">A2Z Quiz</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (
-            <div className="text-center">
-              <div className="mb-4">
-                <label className="block text-lg font-semibold">Enter your Name:</label>
+            <div className="w-full max-w-7xl text-center">
+              <div className="mb-6">
+                <label className="block text-lg font-semibold mb-2">Enter your Name:</label>
                 <input
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="p-2 border rounded mb-4"
+                  className="w-full max-w-md p-3 border rounded-lg text-black"
                   placeholder="Your Name"
                 />
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl cursor-pointer transition-all duration-300 hover:border-4 hover:border-blue-500"
-                    onClick={() => handleCategorySelect(category.id)} // Set category and start quiz
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg cursor-pointer transform transition-transform hover:scale-105 hover:shadow-2xl"
+                    onClick={() => handleCategorySelect(category.id)}
                   >
-                    <h3 className="text-lg font-semibold text-center">{category.name}</h3>
+                    <h3 className="text-2xl font-bold text-center">{category.name}</h3>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="text-center">
-              <div className="relative bg-gray-100 p-6 rounded-lg shadow-lg mb-6">
-                <div className="absolute top-2 right-2 text-xl font-bold text-blue-600">
+            <div className="w-full max-w-3xl text-center">
+              <div className="relative bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+                <div className="absolute top-2 right-2 text-lg font-bold text-yellow-400">
                   Time Left: {timer}s
                 </div>
                 <p className="text-xl mb-4">
                   Question {currentQuestionIndex + 1}/{questions.length}
                 </p>
                 <p
-                  className="text-xl mb-4"
+                  className="text-xl mb-6"
                   dangerouslySetInnerHTML={{
                     __html: questions[currentQuestionIndex].question,
                   }}
@@ -160,22 +162,19 @@ function Trivia() {
                     const answered = answeredQuestions.some(
                       (q) => q.questionIndex === currentQuestionIndex
                     );
-                    const isCorrect = answeredQuestions.find(
-                      (q) => q.questionIndex === currentQuestionIndex && q.isCorrect
-                    );
                     const optionClass = answered
                       ? option === questions[currentQuestionIndex].correctAnswer
                         ? 'bg-green-500 text-white'
                         : selectedAnswer === option
                         ? 'bg-red-500 text-white'
-                        : 'bg-gray-300 text-black'
+                        : 'bg-gray-500 text-black'
                       : 'bg-blue-500 text-white hover:bg-blue-600';
 
                     return (
                       <button
                         key={index}
                         onClick={() => handleAnswer(option)}
-                        className={`px-4 py-2 rounded ${optionClass}`}
+                        className={`px-4 py-3 rounded-lg ${optionClass}`}
                         disabled={answered}
                         dangerouslySetInnerHTML={{ __html: option }}
                       />
@@ -188,11 +187,11 @@ function Trivia() {
         </>
       ) : (
         <div className="text-center">
-          <h3 className="text-2xl font-bold mb-4">Quiz Complete!</h3>
+          <h3 className="text-3xl font-bold mb-6">Quiz Complete!</h3>
           <p className="text-xl mb-4">Your Score: {score}/{questions.length}</p>
           <button
             onClick={resetQuiz}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+            className="bg-yellow-500 text-black px-6 py-3 rounded-lg hover:bg-yellow-600"
           >
             Play Again
           </button>
