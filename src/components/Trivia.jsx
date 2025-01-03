@@ -1,12 +1,9 @@
 // src/components/Trivia.js
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 import axios from 'axios';
-
-
-
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { addScoreToLeaderboard } from '../assets/leaderboardSlice'; // Redux action to add score
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -17,6 +14,11 @@ function Trivia() {
   const [quizComplete, setQuizComplete] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [timer, setTimer] = useState(30); // Timer starts at 30 seconds
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [userName, setUserName] = useState(''); // User's name
+  const dispatch = useDispatch(); // Redux dispatch to save score
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     axios.get('https://opentdb.com/api_category.php').then((response) => {
@@ -43,6 +45,8 @@ function Trivia() {
         setQuizComplete(false);
         setAnsweredQuestions([]);
         setSelectedAnswer(null);
+        setTimer(30); // Reset timer to 30 seconds
+        setTimerRunning(true); // Start timer
       });
   };
 
@@ -64,8 +68,13 @@ function Trivia() {
     setSelectedAnswer(selectedOption);
     if (currentQuestionIndex + 1 < questions.length) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      setTimer(30); // Reset timer for the next question
     } else {
       setQuizComplete(true);
+      // Dispatch action to save score with user's name
+      dispatch(addScoreToLeaderboard({ name: userName, score: score }));
+      // Redirect to leaderboard after quiz completion
+      navigate('/leaderboard');
     }
   };
 
@@ -77,7 +86,21 @@ function Trivia() {
     setQuizComplete(false);
     setAnsweredQuestions([]);
     setSelectedAnswer(null);
+    setTimer(30); // Reset timer
+    setTimerRunning(false); // Stop timer
   };
+
+  // Timer logic: Decrement the timer every second
+  useEffect(() => {
+    if (timerRunning && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else if (timer === 0) {
+      handleAnswer(null); // Automatically answer if time runs out
+    }
+  }, [timer, timerRunning]);
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -86,6 +109,16 @@ function Trivia() {
         <>
           {questions.length === 0 ? (
             <div className="text-center">
+              <div className="mb-4">
+                <label className="block text-lg font-semibold">Enter your Name:</label>
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  className="p-2 border rounded mb-4"
+                  placeholder="Your Name"
+                />
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
                 {categories.map((category) => (
                   <div
@@ -100,39 +133,44 @@ function Trivia() {
             </div>
           ) : (
             <div className="text-center">
-              <p className="text-xl mb-4">
-                Question {currentQuestionIndex + 1}/{questions.length}
-              </p>
-              <p
-                className="text-xl mb-4"
-                dangerouslySetInnerHTML={{
-                  __html: questions[currentQuestionIndex].question,
-                }}
-              />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {questions[currentQuestionIndex].options.map((option, index) => {
-                  const answered = answeredQuestions.some(
-                    (q) => q.questionIndex === currentQuestionIndex
-                  );
-                  const isCorrect = answeredQuestions.find(
-                    (q) => q.questionIndex === currentQuestionIndex && q.isCorrect
-                  );
-                  const optionClass = answered
-                    ? option === currentQuestion.correctAnswer
-                      ? 'bg-green-500 text-white'
-                      : 'bg-red-500 text-white'
-                    : 'bg-blue-500 text-white hover:bg-blue-600';
+              <div className="relative bg-gray-100 p-6 rounded-lg shadow-lg mb-6">
+                <div className="absolute top-2 right-2 text-xl font-bold text-blue-600">
+                  Time Left: {timer}s
+                </div>
+                <p className="text-xl mb-4">
+                  Question {currentQuestionIndex + 1}/{questions.length}
+                </p>
+                <p
+                  className="text-xl mb-4"
+                  dangerouslySetInnerHTML={{
+                    __html: questions[currentQuestionIndex].question,
+                  }}
+                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {questions[currentQuestionIndex].options.map((option, index) => {
+                    const answered = answeredQuestions.some(
+                      (q) => q.questionIndex === currentQuestionIndex
+                    );
+                    const isCorrect = answeredQuestions.find(
+                      (q) => q.questionIndex === currentQuestionIndex && q.isCorrect
+                    );
+                    const optionClass = answered
+                      ? option === questions[currentQuestionIndex].correctAnswer
+                        ? 'bg-green-500 text-white'
+                        : 'bg-red-500 text-white'
+                      : 'bg-blue-500 text-white hover:bg-blue-600';
 
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswer(option)}
-                      className={`px-4 py-2 rounded ${optionClass}`}
-                      disabled={answered}
-                      dangerouslySetInnerHTML={{ __html: option }}
-                    />
-                  );
-                })}
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleAnswer(option)}
+                        className={`px-4 py-2 rounded ${optionClass}`}
+                        disabled={answered}
+                        dangerouslySetInnerHTML={{ __html: option }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
@@ -154,4 +192,3 @@ function Trivia() {
 }
 
 export default Trivia;
-

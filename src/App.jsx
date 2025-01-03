@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Leaderboard from './components/Leaderboard';
 import PrivateRoute from './components/PrivateRoute';
+import AboutUs from './components/AboutUs';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 
@@ -21,6 +22,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/about-us" element={<AboutUs />} /> {/* Add AboutUs route */}
+
           <Route path="/trivia" element={<PrivateRoute><Trivia /></PrivateRoute>} />
         </Routes>
       </div>

@@ -29,8 +29,12 @@ const leaderboardSlice = createSlice({
   },
   reducers: {
     addScoreToLeaderboard: (state, action) => {
+      // Add new score to the leaderboard
       state.scores.push(action.payload);
-      saveToLocalStorage(state.scores); // Save updated leaderboard
+      // Sort leaderboard by score in descending order
+      state.scores.sort((a, b) => b.score - a.score);
+      // Save updated leaderboard to localStorage
+      saveToLocalStorage(state.scores);
     },
   },
 });
