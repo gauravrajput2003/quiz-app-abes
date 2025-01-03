@@ -10,7 +10,7 @@ function Navbar() {
 
   return (
     <nav className="bg-blue-600 p-4 flex justify-between items-center shadow-lg">
-      <Link to="/" className="text-white text-2xl font-bold">Trivia App</Link>
+      <Link to="/" className="text-white text-2xl font-bold">A2Z App</Link>
 
       {/* Mobile menu toggle button */}
       <button

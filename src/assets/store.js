@@ -1,7 +1,7 @@
-// src/assets/store.js
+// src/redux/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
-import leaderboardReducer from './leaderboardSlice'; // Assuming you have a leaderboard slice
+import leaderboardReducer from './leaderboardSlice';
 
 const store = configureStore({
   reducer: {

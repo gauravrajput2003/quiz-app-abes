@@ -1,7 +1,12 @@
+// src/components/Trivia.js
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addScoreToLeaderboard } from '../assets/leaderboardSlice'; // Import your action
+import { useNavigate } from 'react-router-dom';
+import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 import axios from 'axios';
+
+
+
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -10,11 +15,8 @@ function Trivia() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [quizComplete, setQuizComplete] = useState(false);
-  const [name, setName] = useState(''); // State to store the user's name
-  const [scoreSaved, setScoreSaved] = useState(false); // State to show success message
-  const [answeredQuestions, setAnsweredQuestions] = useState([]); // Track answered questions
-  const [selectedAnswer, setSelectedAnswer] = useState(null); // Track the selected answer
-  const dispatch = useDispatch(); // Dispatch function to update Redux store
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
     axios.get('https://opentdb.com/api_category.php').then((response) => {
@@ -27,7 +29,6 @@ function Trivia() {
       alert('Please select a category to start the quiz!');
       return;
     }
-
     axios
       .get(`https://opentdb.com/api.php?amount=10&category=${selectedCategory}&type=multiple`)
       .then((response) => {
@@ -41,8 +42,13 @@ function Trivia() {
         setScore(0);
         setQuizComplete(false);
         setAnsweredQuestions([]);
-        setSelectedAnswer(null); // Reset selected answer
+        setSelectedAnswer(null);
       });
+  };
+
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId); // Set selected category
+    fetchQuestions(); // Start quiz immediately after category selection
   };
 
   const handleAnswer = (selectedOption) => {
@@ -55,19 +61,11 @@ function Trivia() {
       ...prev,
       { questionIndex: currentQuestionIndex, selectedOption, isCorrect },
     ]);
-    setSelectedAnswer(selectedOption); // Store the selected answer
+    setSelectedAnswer(selectedOption);
     if (currentQuestionIndex + 1 < questions.length) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
       setQuizComplete(true);
-    }
-  };
-
-  const handleSubmitScore = () => {
-    if (name.trim() !== '') {
-      // Dispatch the action to save the score and name to the leaderboard
-      dispatch(addScoreToLeaderboard({ name, score }));
-      setScoreSaved(true); // Show the success message
     }
   };
 
@@ -77,36 +75,28 @@ function Trivia() {
     setCurrentQuestionIndex(0);
     setScore(0);
     setQuizComplete(false);
-    setScoreSaved(false); // Reset the score saved message
-    setAnsweredQuestions([]); // Reset answered questions
-    setSelectedAnswer(null); // Reset selected answer
+    setAnsweredQuestions([]);
+    setSelectedAnswer(null);
   };
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6">Trivia Quiz</h2>
+      <h2 className="text-3xl font-bold text-center mb-6">A2Z Quiz</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (
             <div className="text-center">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="block w-full mb-4 p-2 border rounded"
-              >
-                <option value="">Select Category</option>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
                 {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
+                  <div
+                    key={category.id}
+                    className="bg-white p-4 rounded-lg shadow-lg hover:shadow-xl cursor-pointer transition-all duration-300 hover:border-4 hover:border-blue-500"
+                    onClick={() => handleCategorySelect(category.id)} // Set category and start quiz
+                  >
+                    <h3 className="text-lg font-semibold text-center">{category.name}</h3>
+                  </div>
                 ))}
-              </select>
-              <button
-                onClick={fetchQuestions}
-                className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
-              >
-                Start Quiz
-              </button>
+              </div>
             </div>
           ) : (
             <div className="text-center">
@@ -151,26 +141,9 @@ function Trivia() {
         <div className="text-center">
           <h3 className="text-2xl font-bold mb-4">Quiz Complete!</h3>
           <p className="text-xl mb-4">Your Score: {score}/{questions.length}</p>
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="p-2 border rounded mb-4"
-          />
-          {scoreSaved ? (
-            <p className="text-green-500 font-bold mb-4">Score Saved Successfully!</p>
-          ) : (
-            <button
-              onClick={handleSubmitScore}
-              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-            >
-              Save Score
-            </button>
-          )}
           <button
             onClick={resetQuiz}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 ml-4"
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           >
             Play Again
           </button>
@@ -181,3 +154,4 @@ function Trivia() {
 }
 
 export default Trivia;
+

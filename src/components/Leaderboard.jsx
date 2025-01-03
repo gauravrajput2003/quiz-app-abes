@@ -1,10 +1,10 @@
+// src/components/Leaderboard.js
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 function Leaderboard() {
-  const leaderboard = useSelector((state) => state.leaderboard.scores); // Fetch leaderboard data from Redux
+  const leaderboard = useSelector((state) => state.leaderboard.scores);
 
-  // Sort leaderboard by score in descending order
   const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score);
 
   return (

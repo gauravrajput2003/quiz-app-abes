@@ -68,10 +68,30 @@ export function AuthProvider({ children }) {
   };
 
   // Login function
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  const login = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setSuccessMessage("Login successful! Redirecting to trivia...");
+      setTimeout(() => {
+        navigate('/trivia');  // Redirect to trivia page after successful login
+      }, 2000);  // 2 seconds delay for the success message
+    } catch (error) {
+      console.error("Login failed:", error.message);
+      setError(error.message);  // Set error message to state
+    }
+  };
 
   // Logout function
-  const logout = () => signOut(auth);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      dispatch(setUser({ name: '', email: '' }));  // Reset user in Redux
+      navigate('/login');  // Redirect to login page after logout
+    } catch (error) {
+      console.error("Logout failed:", error.message);
+      setError(error.message);  // Set error message to state
+    }
+  };
 
   const value = { currentUser, signup, login, logout, error, successMessage };
 
