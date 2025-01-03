@@ -1,5 +1,3 @@
-import { createSlice } from '@reduxjs/toolkit';
-
 const leaderboardSlice = createSlice({
   name: 'leaderboard',
   initialState: {
@@ -7,7 +5,8 @@ const leaderboardSlice = createSlice({
   },
   reducers: {
     addScoreToLeaderboard: (state, action) => {
-      state.scores.push(action.payload); // Add the new score to the leaderboard
+      // Action payload should include both name and score
+      state.scores.push(action.payload); 
     },
   },
 });
