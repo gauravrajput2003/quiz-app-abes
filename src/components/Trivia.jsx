@@ -112,21 +112,25 @@ function Trivia() {
   }, [timer, timerRunning]);
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
-      style={{ backgroundImage: 'url("/path-to-your-background-image.jpg")' }}
+    <div
+      className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
+      style={{
+        backgroundImage:
+          'url("https://images.unsplash.com/photo-1530462943125-677cc511c87e?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+      }}
     >
-      <h2 className="text-4xl font-extrabold text-center mb-8">A2Z Quiz</h2>
+      <h2 className="text-4xl font-extrabold text-center mb-8 text-black">A2Z Quiz</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (
             <div className="w-full max-w-7xl text-center">
               <div className="mb-6">
-                <label className="block text-lg font-semibold mb-2">Enter your Name:</label>
+                <label className="block text-2xl mb-2 text-black font-bold">Enter your Name:</label>
                 <input
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="w-full max-w-md p-3 border rounded-lg text-black"
+                  className="w-full max-w-md p-3 border rounded-lg font-bold text-xl bg-black"
                   placeholder="Your Name"
                 />
               </div>
@@ -134,7 +138,7 @@ function Trivia() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg cursor-pointer transform transition-transform hover:scale-105 hover:shadow-2xl"
+                    className="text-black bg-gradient-to-r from-white to-white  p-6 rounded-lg shadow-lg cursor-pointer transform transition-transform hover:scale-105 hover:shadow-2xl"
                     onClick={() => handleCategorySelect(category.id)}
                   >
                     <h3 className="text-2xl font-bold text-center">{category.name}</h3>
