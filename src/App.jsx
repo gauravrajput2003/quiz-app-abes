@@ -5,9 +5,11 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import Trivia from './components/Trivia';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Leaderboard from './components/Leaderboard';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           <Route path="/trivia" element={<PrivateRoute><Trivia /></PrivateRoute>} />
         </Routes>
       </div>
+      <Footer/>
     </AuthProvider>
   );
 }

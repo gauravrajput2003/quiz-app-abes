@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useDispatch } from 'react-redux';
+import { setUser } from '../assets/userSlice';  // Redux action to set user data
 
 const firebaseConfig = {
   apiKey: "AIzaSyBytcQ9h_MkdQ5lZcUyvgn5Cb2nhtBmyyg",
@@ -31,6 +33,7 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);  // State to hold error message
   const [successMessage, setSuccessMessage] = useState(null);  // State for success message
   const navigate = useNavigate();  // Hook to navigate
+  const dispatch = useDispatch();  // Dispatch to Redux
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -41,11 +44,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Sign up function with error handling and success message
-  const signup = async (email, password) => {
+  const signup = async (email, password, name) => {
     try {
       setError(null);  // Reset any previous errors
-      await createUserWithEmailAndPassword(auth, email, password);
-      setSuccessMessage("Signup successful! Redirecting to login...");  // Set success message
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Update user's profile with the name
+      await user.updateProfile({ displayName: name });
+
+      // Dispatch name to Redux
+      dispatch(setUser({ name, email }));
+
+      // Set success message and navigate after delay
+      setSuccessMessage("Signup successful! Redirecting to login...");
       setTimeout(() => {
         navigate('/login');  // Redirect to login page after a short delay
       }, 2000);  // 2 seconds delay for the success message
