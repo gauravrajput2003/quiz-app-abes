@@ -29,15 +29,16 @@ const leaderboardSlice = createSlice({
   },
   reducers: {
     addScoreToLeaderboard: (state, action) => {
-      // Add new score to the leaderboard
       state.scores.push(action.payload);
-      // Sort leaderboard by score in descending order
-      state.scores.sort((a, b) => b.score - a.score);
-      // Save updated leaderboard to localStorage
-      saveToLocalStorage(state.scores);
+      state.scores.sort((a, b) => b.score - a.score); // Sort by score
+      saveToLocalStorage(state.scores); // Save updated leaderboard
+    },
+    resetLeaderboard: (state) => {
+      state.scores = [];
+      saveToLocalStorage(state.scores); // Clear leaderboard from localStorage
     },
   },
 });
 
-export const { addScoreToLeaderboard } = leaderboardSlice.actions;
+export const { addScoreToLeaderboard, resetLeaderboard } = leaderboardSlice.actions;
 export default leaderboardSlice.reducer;

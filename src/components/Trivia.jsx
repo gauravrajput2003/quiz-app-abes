@@ -1,9 +1,8 @@
-// src/components/Trivia.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { addScoreToLeaderboard } from '../assets/leaderboardSlice'; // Redux action to add score
+import { useNavigate } from 'react-router-dom';
+import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -51,6 +50,10 @@ function Trivia() {
   };
 
   const handleCategorySelect = (categoryId) => {
+    if (!userName.trim()) {
+      alert('Please enter your name to start the quiz!');
+      return;
+    }
     setSelectedCategory(categoryId); // Set selected category
     fetchQuestions(); // Start quiz immediately after category selection
   };
@@ -66,9 +69,15 @@ function Trivia() {
       { questionIndex: currentQuestionIndex, selectedOption, isCorrect },
     ]);
     setSelectedAnswer(selectedOption);
+    setTimerRunning(false); // Stop timer
+
     if (currentQuestionIndex + 1 < questions.length) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-      setTimer(30); // Reset timer for the next question
+      setTimeout(() => {
+        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+        setSelectedAnswer(null);
+        setTimer(30); // Reset timer for the next question
+        setTimerRunning(true); // Start timer
+      }, 2000); // 2 seconds delay
     } else {
       setQuizComplete(true);
       // Dispatch action to save score with user's name
@@ -157,7 +166,9 @@ function Trivia() {
                     const optionClass = answered
                       ? option === questions[currentQuestionIndex].correctAnswer
                         ? 'bg-green-500 text-white'
-                        : 'bg-red-500 text-white'
+                        : selectedAnswer === option
+                        ? 'bg-red-500 text-white'
+                        : 'bg-gray-300 text-black'
                       : 'bg-blue-500 text-white hover:bg-blue-600';
 
                     return (

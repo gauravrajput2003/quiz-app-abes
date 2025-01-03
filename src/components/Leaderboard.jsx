@@ -1,11 +1,19 @@
 // src/components/Leaderboard.js
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { resetLeaderboard } from '../assets/leaderboardSlice'; // Import reset action
 
 function Leaderboard() {
   const leaderboard = useSelector((state) => state.leaderboard.scores);
+  const dispatch = useDispatch(); // Dispatch to reset leaderboard
 
   const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score);
+
+  const handleResetLeaderboard = () => {
+    if (window.confirm('Are you sure you want to reset the leaderboard?')) {
+      dispatch(resetLeaderboard()); // Dispatch reset action
+    }
+  };
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -13,7 +21,7 @@ function Leaderboard() {
       {leaderboard.length === 0 ? (
         <p>No scores available yet.</p>
       ) : (
-        <table className="w-full table-auto">
+        <table className="w-full table-auto mb-4">
           <thead>
             <tr>
               <th className="px-4 py-2 text-left">Rank</th>
@@ -32,6 +40,12 @@ function Leaderboard() {
           </tbody>
         </table>
       )}
+      <button
+        onClick={handleResetLeaderboard}
+        className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 mt-4"
+      >
+        Reset Leaderboard
+      </button>
     </div>
   );
 }
