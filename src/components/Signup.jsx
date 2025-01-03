@@ -13,7 +13,10 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signup(email, password, name);  // Pass name to signup function
+      await signup(email, password, name);
+      navigate("/login");
+      
+      // Pass name to signup function
     } catch (err) {
       setError('Failed to create an account. Please try again.');
     }
