@@ -20,6 +20,16 @@ function Trivia() {
   const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
+    // Check if user is logged in
+    const storedUserName = localStorage.getItem('userName');
+    if (!storedUserName) {
+      navigate('/login'); // Redirect to login if no userName is found
+    } else {
+      setUserName(storedUserName); // Set userName from local storage
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     axios.get('https://opentdb.com/api_category.php').then((response) => {
       setCategories(response.data.trivia_categories);
     });
@@ -116,10 +126,10 @@ function Trivia() {
       className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
       style={{
         backgroundImage:
-          'url("https://images.unsplash.com/photo-1530462943125-677cc511c87e?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+          'url("https://media.istockphoto.com/id/2002552654/video/question-mark-animated-on-transparent-alpha-channel-looping-composite-item-use-on-any-visual.jpg?s=640x640&k=20&c=YDmJ3ebLj13iFtnpzT_X5F3UrErkt256lU0XRkSQ8v0=")',
       }}
     >
-      <h2 className="text-4xl font-extrabold text-center mb-8 text-black">A2Z Quiz</h2>
+      <h2 className="text-4xl font-extrabold text-center mb-8 text-red-700">A2Z Quiz</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (

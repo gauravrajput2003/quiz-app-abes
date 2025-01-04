@@ -18,12 +18,12 @@ function Leaderboard() {
     <div
       className="p-6 max-w-3xl mx-auto bg-cover bg-center rounded-lg"
       style={{
-        backgroundImage: `url('https://img.freepik.com/free-photo/businesswoman-with-laptop-love-computer-concept-attractive-female-half-length-front-portrait-trendy-green-studio-backgroud-young-emotional-pretty-woman-human-emotions-facial-expression_155003-30347.jpg?ga=GA1.1.547295045.1735834093&semt=ais_hybrid')`,
+        backgroundImage: `url('https://media.istockphoto.com/id/1150254184/photo/she-is-a-winner-excited-young-female-with-laptop-isolated-on-yellow-background.jpg?s=612x612&w=0&k=20&c=shfuNDbnLg8HBES58XkBiJLy9YOp8qnSrKt766ZJTUA=')`,
         height: '100vh', // Ensures the background image covers the full screen height
       }}
     >
-      <div className="bg-opacity-60 bg-black p-6 rounded-lg">
-        <h2 className="text-3xl font-bold text-center mb-6 text-white">Leaderboard</h2>
+      <div className="bg-opacity-20 bg-white p-6 rounded-lg">
+        <h2 className="text-3xl font-bold text-center mb-6  text-blue-600">Leaderboard</h2>
         {leaderboard.length === 0 ? (
           <p className="text-white">No scores available yet.</p>
         ) : (

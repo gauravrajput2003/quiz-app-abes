@@ -1,16 +1,13 @@
-// src/App.js
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-
 import Navbar from './components/Navbar';
-// import Home from './components/Home';
+import Footer from './components/Footer';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Leaderboard from './components/Leaderboard';
-import Trivia from './components/Trivia'; // Import the Trivia component
-import AboutUs from './components/AboutUs'; // Import AboutUs component
+import Trivia from './components/Trivia';
+import AboutUs from './components/AboutUs';
 import './index.css';
-
 
 function App() {
   return (
@@ -23,7 +20,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/trivia" element={<Trivia />} />
+        <Route path="/" element={<Trivia />} />
       </Routes>
+      <Footer /> {/* Add Footer component */}
     </>
   );
 }

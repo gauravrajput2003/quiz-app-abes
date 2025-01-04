@@ -13,7 +13,7 @@ function Login() {
     const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/trivia');
+      navigate('/'); // Redirect to home page after successful login
     } catch (err) {
       setError('Failed to log in. Please check your credentials.');
     }
@@ -51,6 +51,9 @@ function Login() {
           </div>
           <button type="submit" className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200">Sign In</button>
         </form>
+        <div className="mt-4 text-center">
+          <p className="text-gray-300 font-bold text-xl">New to A2Z Quiz? <button onClick={() => navigate('/signup')} className="text-red-500 font-bold text-2xl hover:underline">Sign up now</button></p>
+        </div>
       </div>
     </div>
   );
