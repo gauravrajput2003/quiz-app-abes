@@ -107,7 +107,7 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30);
         setTimerRunning(true);
-      }, 200);
+      }, 2000);
     } else {
       setQuizComplete(true);
       dispatch(addScoreToLeaderboard({ name: userName, score: score }));
@@ -169,18 +169,18 @@ function Trivia() {
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="w-[300px] max-w-md p-3 border rounded-lg  font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                  className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
                   placeholder="Your Name"
                 />
               </div>
-              <div className="flex justify-center mb-6 space-x-4">
+              <div className="flex flex-col sm:flex-row justify-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
                 <div>
                   <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Search Category:</label>
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                    className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
                     placeholder="Search Category"
                   />
                 </div>
@@ -189,7 +189,7 @@ function Trivia() {
                   <select
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
-                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                    className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
                   >
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>

@@ -45,55 +45,41 @@ function Leaderboard() {
   };
 
   return (
-    <div
-      className="p-6 max-w-3xl mx-auto bg-cover bg-center rounded-lg"
-      style={{
-        backgroundImage: `url('https://media.istockphoto.com/id/1150254184/photo/she-is-a-winner-excited-young-female-with-laptop-isolated-on-yellow-background.jpg?s=612x612&w=0&k=20&c=shfuNDbnLg8HBES58XkBiJLy9YOp8qnSrKt766ZJTUA=')`,
-        height: '100vh', // Ensures the background image covers the full screen height
-      }}
-    >
-      <div className="bg-opacity-10 bg-white p-6 rounded-lg">
-        <h2 className="text-3xl text-center mb-6 font-extrabold">Leaderboard</h2>
-        {leaderboard.length === 0 ? (
-          <p className="text-white">No scores available yet.</p>
-        ) : (
-          <div ref={leaderboardRef} className="bg-white p-4 rounded-lg shadow-md">
-            <table className="w-full table-auto mb-4 text-black">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-left font-bold text-2xl">Rank</th>
-                  <th className="px-4 py-2 text-left font-bold text-2xl">Username</th>
-                  <th className="px-4 py-2 text-left font-bold text-2xl">Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedLeaderboard.map((entry, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2 text-3xl text-black font-semibold">{index + 1}</td>
-                    <td className="px-4 py-2 font-bold text-black text-xl">{entry.name}</td>
-                    <td className={`px-4 py-2 text-2xl ${getScoreStyle(entry.score)}`}>
-                      {entry.score}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <div className="flex space-x-4 mt-4">
-          <button
-            onClick={handleResetLeaderboard}
-            className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
-          >
-            Reset Leaderboard
-          </button>
-          <button
-            onClick={handleShareImage}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            Share Leaderboard
-          </button>
-        </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <h2 className="text-4xl font-extrabold text-center mb-8">Leaderboard</h2>
+      <div ref={leaderboardRef} className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Rank</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedLeaderboard.map((entry, index) => (
+              <tr key={index} className="text-center">
+                <td className="border px-4 py-2">{index + 1}</td>
+                <td className="border px-4 py-2">{entry.name}</td>
+                <td className={`border px-4 py-2 ${getScoreStyle(entry.score)}`}>{entry.score}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex flex-col sm:flex-row justify-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+        <button
+          onClick={handleResetLeaderboard}
+          className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600"
+        >
+          Reset Leaderboard
+        </button>
+        <button
+          onClick={handleShareImage}
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600"
+        >
+          Share Leaderboard
+        </button>
       </div>
     </div>
   );
