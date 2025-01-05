@@ -38,7 +38,7 @@ function Navbar() {
             to="/about-us"
             className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-300"
           >
-            Aboutus
+            About us
           </NavLink>
           <NavLink
             to="/leaderboard"

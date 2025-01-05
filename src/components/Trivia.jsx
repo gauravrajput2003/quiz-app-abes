@@ -7,8 +7,10 @@ import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('easy');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [quizComplete, setQuizComplete] = useState(false);
@@ -17,6 +19,8 @@ function Trivia() {
   const [timer, setTimer] = useState(30);
   const [timerRunning, setTimerRunning] = useState(false);
   const [userName, setUserName] = useState('');
+  const [error, setError] = useState(''); // State to handle errors
+  const [searchTerm, setSearchTerm] = useState(''); // State to handle search term
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,16 +39,21 @@ function Trivia() {
   useEffect(() => {
     axios.get('https://opentdb.com/api_category.php').then((response) => {
       setCategories(response.data.trivia_categories);
+      setFilteredCategories(response.data.trivia_categories);
     });
   }, []);
 
-  const fetchQuestions = () => {
-    if (!selectedCategory) {
-      alert('Please select a category to start the quiz!');
-      return;
-    }
+  useEffect(() => {
+    setFilteredCategories(
+      categories.filter((category) =>
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, categories]);
+
+  const fetchQuestions = (categoryId) => {
     axios
-      .get(`https://opentdb.com/api.php?amount=10&category=${selectedCategory}&type=multiple`)
+      .get(`https://opentdb.com/api.php?amount=10&category=${categoryId}&difficulty=${selectedDifficulty}&type=multiple`)
       .then((response) => {
         const formattedQuestions = response.data.results.map((q) => ({
           question: q.question,
@@ -59,6 +68,14 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30);
         setTimerRunning(true);
+        setError(''); // Clear any previous errors
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 429) {
+          setError('You have exceeded the rate limit. Please try again later.');
+        } else {
+          setError('Failed to fetch questions. Please try again.');
+        }
       });
   };
 
@@ -68,7 +85,7 @@ function Trivia() {
       return;
     }
     setSelectedCategory(categoryId);
-    fetchQuestions();
+    fetchQuestions(categoryId);
   };
 
   const handleAnswer = (selectedOption) => {
@@ -101,6 +118,7 @@ function Trivia() {
   const resetQuiz = () => {
     setQuestions([]);
     setSelectedCategory('');
+    setSelectedDifficulty('easy');
     setCurrentQuestionIndex(0);
     setScore(0);
     setQuizComplete(false);
@@ -108,6 +126,7 @@ function Trivia() {
     setSelectedAnswer(null);
     setTimer(30);
     setTimerRunning(false);
+    setError(''); // Clear any previous errors
   };
 
   useEffect(() => {
@@ -154,8 +173,33 @@ function Trivia() {
                   placeholder="Your Name"
                 />
               </div>
+              <div className="flex justify-center mb-6 space-x-4">
+                <div>
+                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Search Category:</label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                    placeholder="Search Category"
+                  />
+                </div>
+                <div>
+                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Select Difficulty:</label>
+                  <select
+                    value={selectedDifficulty}
+                    onChange={(e) => setSelectedDifficulty(e.target.value)}
+                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                  >
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+              </div>
+              {error && <p className="text-red-500 mb-4">{error}</p>}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {categories.map((category) => (
+                {filteredCategories.map((category) => (
                   <div
                     key={category.id}
                     className="bg-white w-full p-6 rounded-lg shadow-2xl cursor-pointer transition-transform transform hover:scale-105"
