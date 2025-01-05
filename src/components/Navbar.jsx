@@ -14,7 +14,7 @@ function Navbar() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* App Logo */}
         <Link to="/" className="text-white text-3xl font-extrabold tracking-wide">
-          A2Z<span className="text-yellow-400">App</span>
+          A2Z<span className="text-yellow-400">Quiz</span>
         </Link>
 
         {/* Mobile menu toggle button */}

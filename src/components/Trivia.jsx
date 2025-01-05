@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 
 function Trivia() {
@@ -13,20 +14,22 @@ function Trivia() {
   const [quizComplete, setQuizComplete] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [timer, setTimer] = useState(30); // Timer starts at 30 seconds
+  const [timer, setTimer] = useState(30);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [userName, setUserName] = useState(''); // User's name
-  const dispatch = useDispatch(); // Redux dispatch to save score
-  const navigate = useNavigate(); // For navigation
+  const [userName, setUserName] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in
-    const storedUserName = localStorage.getItem('userName');
-    if (!storedUserName) {
-      navigate('/login'); // Redirect to login if no userName is found
-    } else {
-      setUserName(storedUserName); // Set userName from local storage
-    }
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigate('/login');
+      } else {
+        setUserName(user.email);
+      }
+    });
+    return () => unsubscribe();
   }, [navigate]);
 
   useEffect(() => {
@@ -54,8 +57,8 @@ function Trivia() {
         setQuizComplete(false);
         setAnsweredQuestions([]);
         setSelectedAnswer(null);
-        setTimer(30); // Reset timer to 30 seconds
-        setTimerRunning(true); // Start timer
+        setTimer(30);
+        setTimerRunning(true);
       });
   };
 
@@ -64,8 +67,8 @@ function Trivia() {
       alert('Please enter your name to start the quiz!');
       return;
     }
-    setSelectedCategory(categoryId); // Set selected category
-    fetchQuestions(); // Start quiz immediately after category selection
+    setSelectedCategory(categoryId);
+    fetchQuestions();
   };
 
   const handleAnswer = (selectedOption) => {
@@ -79,20 +82,18 @@ function Trivia() {
       { questionIndex: currentQuestionIndex, selectedOption, isCorrect },
     ]);
     setSelectedAnswer(selectedOption);
-    setTimerRunning(false); // Stop timer
+    setTimerRunning(false);
 
     if (currentQuestionIndex + 1 < questions.length) {
       setTimeout(() => {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
         setSelectedAnswer(null);
-        setTimer(30); // Reset timer for the next question
-        setTimerRunning(true); // Start timer
-      }, 500);
+        setTimer(30);
+        setTimerRunning(true);
+      }, 2000);
     } else {
       setQuizComplete(true);
-      // Dispatch action to save score with user's name
       dispatch(addScoreToLeaderboard({ name: userName, score: score }));
-      // Redirect to leaderboard after quiz completion
       navigate('/leaderboard');
     }
   };
@@ -105,11 +106,10 @@ function Trivia() {
     setQuizComplete(false);
     setAnsweredQuestions([]);
     setSelectedAnswer(null);
-    setTimer(30); // Reset timer
-    setTimerRunning(false); // Stop timer
+    setTimer(30);
+    setTimerRunning(false);
   };
 
-  // Timer logic: Decrement the timer every second
   useEffect(() => {
     if (timerRunning && timer > 0) {
       const interval = setInterval(() => {
@@ -117,41 +117,51 @@ function Trivia() {
       }, 1000);
       return () => clearInterval(interval);
     } else if (timer === 0) {
-      handleAnswer(null); // Automatically answer if time runs out
+      handleAnswer(null);
     }
   }, [timer, timerRunning]);
+
+  useEffect(() => {
+    const disableRightClick = (e) => e.preventDefault();
+    const preventCopy = (e) => e.preventDefault();
+
+    document.addEventListener('contextmenu', disableRightClick);
+    document.addEventListener('copy', preventCopy);
+
+    return () => {
+      document.removeEventListener('contextmenu', disableRightClick);
+      document.removeEventListener('copy', preventCopy);
+    };
+  }, []);
 
   return (
     <div
       className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
-      style={{
-        backgroundImage:
-          'url("https://media.istockphoto.com/id/2002552654/video/question-mark-animated-on-transparent-alpha-channel-looping-composite-item-use-on-any-visual.jpg?s=640x640&k=20&c=YDmJ3ebLj13iFtnpzT_X5F3UrErkt256lU0XRkSQ8v0=")',
-      }}
+      style={{ backgroundImage: 'url("https://img.freepik.com/free-vector/background-abstract-pixel-rain_23-2148367760.jpg?ga=GA1.1.547295045.1735834093&semt=ais_hybrid")' }}
     >
-      <h2 className="text-4xl font-extrabold text-center mb-8 text-red-700">A2Z Quiz</h2>
+      <h2 className="text-4xl font-extrabold text-center mb-8">A2Z Quiz</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (
-            <div className="w-full max-w-7xl text-center">
+            <div className="w-full max-w-6xl text-center">
               <div className="mb-6">
-                <label className="block text-2xl mb-2 text-black font-bold">Enter your Name:</label>
+                <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Enter your Name:</label>
                 <input
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="w-full max-w-md p-3 border rounded-lg font-bold text-xl bg-black"
+                  className="w-[300px] max-w-md p-3 border rounded-lg  font-bold transition-transform transform hover:scale-105 bg-black text-white"
                   placeholder="Your Name"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="text-black bg-gradient-to-r from-white to-white  p-6 rounded-lg shadow-lg cursor-pointer transform transition-transform hover:scale-105 hover:shadow-2xl"
+                    className="bg-white w-full p-6 rounded-lg shadow-2xl cursor-pointer transition-transform transform hover:scale-105"
                     onClick={() => handleCategorySelect(category.id)}
                   >
-                    <h3 className="text-2xl font-bold text-center">{category.name}</h3>
+                    <h3 className="text-xl font-bold text-center text-black">{category.name}</h3>
                   </div>
                 ))}
               </div>
@@ -162,11 +172,11 @@ function Trivia() {
                 <div className="absolute top-2 right-2 text-lg font-bold text-yellow-400">
                   Time Left: {timer}s
                 </div>
-                <p className="text-xl mb-4">
+                <p className="text-xl mb-4 no-select">
                   Question {currentQuestionIndex + 1}/{questions.length}
                 </p>
                 <p
-                  className="text-xl mb-6"
+                  className="text-xl mb-6 no-select"
                   dangerouslySetInnerHTML={{
                     __html: questions[currentQuestionIndex].question,
                   }}
@@ -188,7 +198,7 @@ function Trivia() {
                       <button
                         key={index}
                         onClick={() => handleAnswer(option)}
-                        className={`px-4 py-3 rounded-lg ${optionClass}`}
+                        className={`px-4 py-3 rounded-lg no-select ${optionClass}`}
                         disabled={answered}
                         dangerouslySetInnerHTML={{ __html: option }}
                       />

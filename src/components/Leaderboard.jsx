@@ -22,8 +22,8 @@ function Leaderboard() {
         height: '100vh', // Ensures the background image covers the full screen height
       }}
     >
-      <div className="bg-opacity-20 bg-white p-6 rounded-lg">
-        <h2 className="text-3xl font-bold text-center mb-6  text-blue-600">Leaderboard</h2>
+      <div className="bg-opacity-10 bg-white p-6 rounded-lg">
+        <h2 className="text-3xl font-bold text-center mb-6 text-white">Leaderboard</h2>
         {leaderboard.length === 0 ? (
           <p className="text-white">No scores available yet.</p>
         ) : (
