@@ -90,7 +90,7 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30);
         setTimerRunning(true);
-      }, 2000);
+      }, 200);
     } else {
       setQuizComplete(true);
       dispatch(addScoreToLeaderboard({ name: userName, score: score }));
