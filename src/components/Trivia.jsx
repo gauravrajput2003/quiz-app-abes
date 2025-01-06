@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
+import { useTranslation } from 'react-i18next';
+
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -19,10 +21,11 @@ function Trivia() {
   const [timer, setTimer] = useState(30);
   const [timerRunning, setTimerRunning] = useState(false);
   const [userName, setUserName] = useState('');
-  const [error, setError] = useState(''); // State to handle errors
-  const [searchTerm, setSearchTerm] = useState(''); // State to handle search term
+  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const auth = getAuth();
@@ -51,37 +54,55 @@ function Trivia() {
     );
   }, [searchTerm, categories]);
 
-  const fetchQuestions = (categoryId) => {
-    axios
-      .get(`https://opentdb.com/api.php?amount=10&category=${categoryId}&difficulty=${selectedDifficulty}&type=multiple`)
-      .then((response) => {
-        const formattedQuestions = response.data.results.map((q) => ({
-          question: q.question,
-          options: [...q.incorrect_answers, q.correct_answer].sort(() => Math.random() - 0.5),
-          correctAnswer: q.correct_answer,
-        }));
-        setQuestions(formattedQuestions);
-        setCurrentQuestionIndex(0);
-        setScore(0);
-        setQuizComplete(false);
-        setAnsweredQuestions([]);
-        setSelectedAnswer(null);
-        setTimer(30);
-        setTimerRunning(true);
-        setError(''); // Clear any previous errors
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 429) {
-          setError('You have exceeded the rate limit. Please try again later.');
-        } else {
-          setError('Failed to fetch questions. Please try again.');
-        }
-      });
+  const fetchQuestions = async (categoryId) => {
+    try {
+      const response = await axios.get(
+        `https://opentdb.com/api.php?amount=10&category=${categoryId}&difficulty=${selectedDifficulty}&type=multiple`
+      );
+      const formattedQuestions = response.data.results.map((q) => ({
+        question: q.question,
+        options: [...q.incorrect_answers, q.correct_answer].sort(() => Math.random() - 0.5),
+        correctAnswer: q.correct_answer,
+      }));
+
+      const translatedQuestions = await Promise.all(
+        formattedQuestions.map(async (q) => {
+          const translatedQuestion = await translateText(q.question, i18n.language);
+          const translatedOptions = await Promise.all(
+            q.options.map(async (option) => {
+              const translatedOption = await translateText(option, i18n.language);
+              return translatedOption;
+            })
+          );
+          return {
+            ...q,
+            question: translatedQuestion,
+            options: translatedOptions,
+          };
+        })
+      );
+
+      setQuestions(translatedQuestions);
+      setCurrentQuestionIndex(0);
+      setScore(0);
+      setQuizComplete(false);
+      setAnsweredQuestions([]);
+      setSelectedAnswer(null);
+      setTimer(30);
+      setTimerRunning(true);
+      setError('');
+    } catch (error) {
+      if (error.response && error.response.status === 429) {
+        setError('You have exceeded the rate limit. Please try again later.');
+      } else {
+        setError('Failed to fetch questions. Please try again.');
+      }
+    }
   };
 
   const handleCategorySelect = (categoryId) => {
     if (!userName.trim()) {
-      alert('Please enter your name to start the quiz!');
+      alert(t('enter_name'));
       return;
     }
     setSelectedCategory(categoryId);
@@ -107,7 +128,7 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30);
         setTimerRunning(true);
-      }, 200);
+      }, 2000);
     } else {
       setQuizComplete(true);
       dispatch(addScoreToLeaderboard({ name: userName, score: score }));
@@ -126,7 +147,7 @@ function Trivia() {
     setSelectedAnswer(null);
     setTimer(30);
     setTimerRunning(false);
-    setError(''); // Clear any previous errors
+    setError('');
   };
 
   useEffect(() => {
@@ -158,42 +179,43 @@ function Trivia() {
       className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
       style={{ backgroundImage: 'url("https://img.freepik.com/free-vector/background-abstract-pixel-rain_23-2148367760.jpg?ga=GA1.1.547295045.1735834093&semt=ais_hybrid")' }}
     >
-      <h2 className="text-4xl font-extrabold text-center mb-8">A2Z Quiz</h2>
+   
+      <h2 className="text-4xl font-extrabold text-center mb-8">{t('welcome')}</h2>
       {!quizComplete ? (
         <>
           {questions.length === 0 ? (
             <div className="w-full max-w-6xl text-center">
               <div className="mb-6">
-                <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Enter your Name:</label>
+                <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">{t('enter_name')}</label>
                 <input
                   type="text"
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
-                  placeholder="Your Name"
+                  className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                  placeholder={t('enter_name')}
                 />
               </div>
               <div className="flex flex-col sm:flex-row justify-center mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
                 <div>
-                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Search Category:</label>
+                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">{t('search_category')}</label>
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
-                    placeholder="Search Category"
+                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                    placeholder={t('search_category')}
                   />
                 </div>
                 <div>
-                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">Select Difficulty:</label>
+                  <label className="block text-2xl font-bold mb-2 p-2 rounded-lg">{t('select_difficulty')}</label>
                   <select
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
-                    className="w-full max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
+                    className="w-[300px] max-w-md p-3 border rounded-lg font-bold transition-transform transform hover:scale-105 bg-black text-white"
                   >
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
+                    <option value="easy">{t('easy')}</option>
+                    <option value="medium">{t('medium')}</option>
+                    <option value="hard">{t('hard')}</option>
                   </select>
                 </div>
               </div>
@@ -255,13 +277,13 @@ function Trivia() {
         </>
       ) : (
         <div className="text-center">
-          <h3 className="text-3xl font-bold mb-6">Quiz Complete!</h3>
-          <p className="text-xl mb-4">Your Score: {score}/{questions.length}</p>
+          <h3 className="text-3xl font-bold mb-6">{t('quiz_complete')}</h3>
+          <p className="text-xl mb-4">{t('your_score', { score: score, total: questions.length })}</p>
           <button
             onClick={resetQuiz}
             className="bg-yellow-500 text-black px-6 py-3 rounded-lg hover:bg-yellow-600"
           >
-            Play Again
+            {t('play_again')}
           </button>
         </div>
       )}

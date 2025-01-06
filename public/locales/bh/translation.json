@@ -1,0 +1,12 @@
+{
+    "welcome": "A2Z Quiz में राउर स्वागत बा",
+    "enter_name": "आपन नाम दर्ज करीं:",
+    "search_category": "श्रेणी खोजीं:",
+    "select_difficulty": "कठिनाई चुनल जाव:",
+    "easy": "आसान",
+    "medium": "मध्यम",
+    "hard": "कठिन",
+    "play_again": "फिर से खेलीं",
+    "quiz_complete": "क्विज पूरा भइल!",
+    "your_score": "राउर स्कोर: {{score}}/{{total}}"
+  }

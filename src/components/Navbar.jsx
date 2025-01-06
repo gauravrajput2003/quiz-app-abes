@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LanguageSelector from './LanguageSelector';
 
 function Navbar() {
   const { currentUser, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Toggle menu visibility for mobile view
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <nav className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-xl rounded-b-xl">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        {/* App Logo */}
         <Link to="/" className="text-white text-3xl font-extrabold tracking-wide">
           A2Z<span className="text-yellow-400">Quiz</span>
         </Link>
 
-        {/* Mobile menu toggle button */}
         <button
           onClick={toggleMenu}
           className="text-white text-2xl md:hidden focus:outline-none"
@@ -26,8 +24,7 @@ function Navbar() {
           <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
         </button>
 
-        {/* Desktop menu */}
-        <div className="hidden md:flex space-x-6">
+        <div className="hidden md:flex space-x-6 items-center">
           <NavLink
             to="/trivia"
             className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-300"
@@ -47,12 +44,15 @@ function Navbar() {
             Leaderboard
           </NavLink>
           {currentUser ? (
-            <button
-              onClick={logout}
-              className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-300"
-            >
-              Logout
-            </button>
+            <>
+              <button
+                onClick={logout}
+                className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-300"
+              >
+                Logout
+              </button>
+              <LanguageSelector />
+            </>
           ) : (
             <>
               <NavLink
@@ -72,7 +72,6 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-blue-600 text-white space-y-4 px-4 py-4">
           <NavLink
@@ -87,7 +86,7 @@ function Navbar() {
             className="block text-lg font-semibold hover:text-yellow-400 transition duration-300"
             onClick={() => setIsMenuOpen(false)}
           >
-            Aboutus
+            About us
           </NavLink>
           <NavLink
             to="/leaderboard"
@@ -97,12 +96,15 @@ function Navbar() {
             Leaderboard
           </NavLink>
           {currentUser ? (
-            <button
-              onClick={logout}
-              className="block text-lg font-semibold hover:text-yellow-400 transition duration-300"
-            >
-              Logout
-            </button>
+            <>
+              <button
+                onClick={logout}
+                className="block text-lg font-semibold hover:text-yellow-400 transition duration-300"
+              >
+                Logout
+              </button>
+              <LanguageSelector />
+            </>
           ) : (
             <>
               <NavLink

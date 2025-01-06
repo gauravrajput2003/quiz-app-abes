@@ -1,0 +1,12 @@
+{
+  "welcome": "Welcome to A2Z Quiz",
+  "enter_name": "Enter your Name:",
+  "search_category": "Search Category:",
+  "select_difficulty": "Select Difficulty:",
+  "easy": "Easy",
+  "medium": "Medium",
+  "hard": "Hard",
+  "play_again": "Play Again",
+  "quiz_complete": "Quiz Complete!",
+  "your_score": "Your Score: {{score}}/{{total}}"
+}

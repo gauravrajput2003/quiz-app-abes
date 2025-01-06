@@ -1,0 +1,12 @@
+{
+    "welcome": "A2Z Quiz में आपका स्वागत है",
+    "enter_name": "अपना नाम दर्ज करें:",
+    "search_category": "श्रेणी खोजें:",
+    "select_difficulty": "कठिनाई का चयन करें:",
+    "easy": "आसान",
+    "medium": "मध्यम",
+    "hard": "कठिन",
+    "play_again": "फिर से खेलें",
+    "quiz_complete": "प्रश्नोत्तरी पूरी हुई!",
+    "your_score": "आपका स्कोर: {{score}}/{{total}}"
+  }

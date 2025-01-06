@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Provider } from 'react-redux';
 import store from './assets/store';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import './i18n';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
