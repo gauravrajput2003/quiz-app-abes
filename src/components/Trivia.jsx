@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 import { useTranslation } from 'react-i18next';
-
+import Navbar from './Navbar';
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -65,24 +65,7 @@ function Trivia() {
         correctAnswer: q.correct_answer,
       }));
 
-      const translatedQuestions = await Promise.all(
-        formattedQuestions.map(async (q) => {
-          const translatedQuestion = await translateText(q.question, i18n.language);
-          const translatedOptions = await Promise.all(
-            q.options.map(async (option) => {
-              const translatedOption = await translateText(option, i18n.language);
-              return translatedOption;
-            })
-          );
-          return {
-            ...q,
-            question: translatedQuestion,
-            options: translatedOptions,
-          };
-        })
-      );
-
-      setQuestions(translatedQuestions);
+      setQuestions(formattedQuestions);
       setCurrentQuestionIndex(0);
       setScore(0);
       setQuizComplete(false);
@@ -128,7 +111,7 @@ function Trivia() {
         setSelectedAnswer(null);
         setTimer(30);
         setTimerRunning(true);
-      }, 2000);
+      }, 200);
     } else {
       setQuizComplete(true);
       dispatch(addScoreToLeaderboard({ name: userName, score: score }));
@@ -179,7 +162,7 @@ function Trivia() {
       className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
       style={{ backgroundImage: 'url("https://img.freepik.com/free-vector/background-abstract-pixel-rain_23-2148367760.jpg?ga=GA1.1.547295045.1735834093&semt=ais_hybrid")' }}
     >
-   
+      <Navbar />
       <h2 className="text-4xl font-extrabold text-center mb-8">{t('welcome')}</h2>
       {!quizComplete ? (
         <>
@@ -236,10 +219,10 @@ function Trivia() {
             <div className="w-full max-w-3xl text-center">
               <div className="relative bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
                 <div className="absolute top-2 right-2 text-lg font-bold text-yellow-400">
-                  Time Left: {timer}s
+                  {t('time_left')}: {timer}s
                 </div>
                 <p className="text-xl mb-4 no-select">
-                  Question {currentQuestionIndex + 1}/{questions.length}
+                  {t('question')} {currentQuestionIndex + 1}/{questions.length}
                 </p>
                 <p
                   className="text-xl mb-6 no-select"
