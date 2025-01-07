@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { addScoreToLeaderboard } from '../assets/leaderboardSlice';
 import { useTranslation } from 'react-i18next';
-import Navbar from './Navbar';
 
 function Trivia() {
   const [categories, setCategories] = useState([]);
@@ -162,7 +161,6 @@ function Trivia() {
       className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center text-white p-6"
       style={{ backgroundImage: 'url("https://img.freepik.com/free-vector/background-abstract-pixel-rain_23-2148367760.jpg?ga=GA1.1.547295045.1735834093&semt=ais_hybrid")' }}
     >
-      <Navbar />
       <h2 className="text-4xl font-extrabold text-center mb-8">{t('welcome')}</h2>
       {!quizComplete ? (
         <>
